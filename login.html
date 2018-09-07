@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="google-signin-client_id" content="785037493601-205nrch5cf6k4dfdu7s3mj8e22f590r0.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="./style/login.css">
+
+</head>
+
+<body>
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+            appId            : 1370404409760808,
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v3.1'
+            });
+        };
+        
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <div class="wrapper">
+        <div id='login'>Login / Register</div>
+        <div class="login-text">
+            <button class="cta" onclick='animateLogin()'><i class="fas fa-chevron-down fa-1x"></i></button>
+            <div class="text">
+                <a style="display: inline"  id="reg">Register</a> <span style="font-size: 40px" id="a">|</span>
+                <a style="display: inline"  id="log">Login</a>
+
+
+
+                <br>
+                <input type="text" placeholder="Username" id="username">
+
+                <br>
+                <input type="text" placeholder="Email" id="email">
+                <br>
+                <input type="password" placeholder="Password" id="password">
+                <br><br>
+                <button class="login-btn" id="login-btn">Log In</button>
+                <button type="button" class="signup" id="register">Sign Up</button>
+                <br>
+                <br>
+
+                <div class="g-signin2" data-onsuccess="onSignIn" id="google"></div>
+
+                <br>
+                <div>
+                    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();" id="fb"></fb:login-button>
+                </div>
+
+            </div>
+        </div>
+        <div class="call-text">
+            <h1>Discover a whole new level of <span>Musmusim</span></h1>            
+        </div>
+        
+    </div>
+
+
+    <script src="./style/login.js"></script>
+
+
+    <script> 
+        let token = localStorage.getItem('token')
+        
+        
+        
+        $('#login-btn').hide()
+        $('#fb').hide()
+        $('#google').hide()
+        $('#reg').click(function(){
+            
+            $('#login-btn').hide()
+        $('#fb').hide()
+        $('#google').hide()
+        $('#username').show()
+        $('#register').show()   
+        })
+
+        $('#log').click(function(){
+            $('#login-btn').show()
+        $('#fb').show()
+        $('#google').show()
+        $('#username').hide()
+        $('#register').hide()
+        })
+        if (token){
+            $.ajax({
+                    method: "POST",
+                    url: "http://localhost:3000/users/authentication",
+                    data: {
+                        token: token
+                    }
+                })
+                .done(function (data) {
+                    if(data.token){
+                        window.location.href = "index.html";
+                    }
+                })
+                .fail(function (err) {
+                    
+                })
+        }
+
+ 
+        $('#register').click(function(){
+
+            let username = $('#username').val()
+            let email = $('#email').val()
+            let password = $('#password').val()
+
+            let data = {
+                username,
+                email,
+                password
+            }
+
+            axios.post('http://localhost:3000/users/signup', data)
+                .then(response => {
+                    swal(`${response.data.msg}`)
+                })
+                .catch(err => {
+                    swal(`${err.response.data.msg}`)
+                })
+        })
+    </script>
+
+
+    <script>
+        $("#login-btn").click(() => {
+
+            const email = $("#email").val();
+
+            const password = $("#password").val();
+
+            console.log(username, password);
+
+            $.ajax({
+                    method: "POST",
+                    url: "http://localhost:3000/users/signin",
+                    data: {
+                        email,
+                        password
+                    }
+                })
+
+                .done(response => {                    
+                    localStorage.setItem('token', response.token);
+                    swal("Good job!", "You clicked the button!", "success")
+                    .then(()=>{
+                window.location.href = "index.html"
+            })
+                })
+
+                .fail(err => {
+                    alert(`${err.responseJSON.message}`);
+                })
+        })
+
+        function onSignIn(googleUser) {
+
+            const token = googleUser.getAuthResponse().id_token;
+
+            $.ajax({
+
+
+                method: "POST",
+                url: "http://localhost:3000/users/signin/google",
+                data: {
+                    token: token
+                }
+            })
+            .done(function (data) {
+                localStorage.setItem('token', data.token)
+                window.location.href = "index.html"  
+            })
+            .fail(function (err) {
+
+            })
+
+
+        }
+
+      
+        function checkLoginState() {
+            FB.getLoginStatus(function (response) {
+                retrieveInfo(response);
+            });
+        }
+
+        function retrieveInfo(response) {
+            let token = response.authResponse.accessToken
+            $.ajax({
+                    type: 'POST',
+                    url: 'http://localhost:3000/users/signin/facebook',
+                    data: {
+                        accessToken: token
+                    }
+                })
+                .done(data => {
+                    localStorage.setItem('token', data.token)
+                    window.location.href = "index.html"
+                })
+                .fail(err => {
+                    console.log(err)
+                })
+        }
+
+        var clicked = true
+
+        function animateLogin() {
+            if (clicked) {
+                $('.login-text').css('background-image',
+                    'url("https://source.unsplash.com/800x450/?dark,nature,water")')
+                $('.call-text').css('background-image', 'none')
+                $('.signup-btn').hide()
+                clicked = false;
+            } else {
+                $('.login-text').css('background-image', 'none')
+                $('.call-text').css('background-image', 'url("https://source.unsplash.com/800x450/?dark,nature,water")')
+                $('.signup-btn').show()
+                clicked = true;
+            }
+        }
+    </script>
+</body>
+
+</html>
