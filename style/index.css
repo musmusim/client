@@ -21,11 +21,13 @@ body {
 
 .cellphone-container {
   width: 375px;
-  height: 650px;
+  min-height: 700px;
   background-color: #1e1b26;
-  margin: 90px auto 0 auto;
+  margin: 60px 20px 0 20px;
   box-shadow: 5px 5px 115px -14px black;
   border-radius: 4px;
+  position: relative;
+  display: inline-block;
 }
 
 .menu {

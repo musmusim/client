@@ -8,31 +8,61 @@
     <meta name="google-signin-client_id" content="785037493601-205nrch5cf6k4dfdu7s3mj8e22f590r0.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <title>LOGIN</title>
     <link rel="stylesheet" href="./style/login.css">
 
 </head>
 
 <body>
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+            appId            : 1370404409760808,
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v3.1'
+            });
+        };
+        
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+    </script>
     <div class="wrapper">
+        <div id='login'>Log In</div>
         <div class="login-text">
-            <button class="cta"><i class="fas fa-chevron-down fa-1x"></i></button>
+            <button class="cta" onclick='animateLogin()'><i class="fas fa-chevron-down fa-1x"></i></button>
             <div class="text">
                 <a href="">Login</a>
                 <hr>
                 <br>
-                <input type="text" placeholder="Username">
+                <input type="text" placeholder="Username" id="username">
                 <br>
-                <input type="password" placeholder="Password">
-                <br>
-                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+              <input type="text" placeholder="Email" id="email">
+              <br>
+
+                <input type="password" placeholder="Password" id="password">
+                <br><br>
                 <button class="login-btn">Log In</button>
-                <button class="signup-btn">Sign Up</button>
+                <br>
+                <br>                                                                
+                <button type="button" class="signup-btn" id="register">Sign Up</button>
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
+                <br>
+                <div><fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button></div>
+
             </div>
         </div>
         <div class="call-text">
-            <h1>Show us your <span>creative</span> side</h1>
-            <button>Join the Community</button>
+            <h1>Discover a whole new level of <span>Musmusim</span></h1>
+            <button class="signup-btn">Sign Up Now</button>
         </div>
         
     </div>
@@ -40,8 +70,7 @@
 
     <script src="./style/login.js"></script>
 
-    <script>
-
+    <script> 
         let token = localStorage.getItem('token')
         
         if (token){
@@ -62,7 +91,24 @@
                 })
         }
 
+ 
+        $('#register').click(function(){
+            let username = $('#username').val()
+            let email = $('#email').val()
+            let password = $('#password').val()
+
+            let data = {username,email,password}
+            console.log(data);
+             axios.post('http://localhost:3000/users/signup',data)
+             .then(response =>{
+                swal(`${response.data.msg}`)                   
+             })
+             .catch(err =>{                                  
+                 swal(`${err.response.data.msg}`)                           
+             })
+        })
     </script>
+
 
     <script>
         function onSignIn(googleUser) {
@@ -70,20 +116,59 @@
             const token = googleUser.getAuthResponse().id_token;
 
             $.ajax({
-                    method: "POST",
-                    url: "http://localhost:3000/users/signin/google",
-                    data: {
-                        token: token
-                    }
-                })
-                .done(function (data) {
-                    localStorage.setItem('token', data.token)  
-                })
-                .fail(function (err) {
-                   
-                })
+
+                method: "POST",
+                url: "http://localhost:3000/users/signin/google",
+                data: {
+                    token: token
+                }
+            })
+            .done(function (data) {
+                localStorage.setItem('token', data.token)  
+            })
+            .fail(function (err) {
+
+            })
         }
-    </script>
+
+      
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+            retrieveInfo(response);
+            });
+        }
+        
+        function retrieveInfo(response) {
+            let token = response.authResponse.accessToken
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:3000/users/signin/facebook',
+                data: {accessToken: token}
+            })
+            .done(data => {
+                localStorage.setItem('token', data.token)
+            })
+            .fail(err => {
+                console.log(err)
+            })
+        }
+        
+        var clicked = true
+
+        function animateLogin() {
+            if (clicked) {
+                $('.login-text').css('background-image', 'url("https://source.unsplash.com/800x450/?dark,nature,water")')
+                $('.call-text').css('background-image', 'none')
+                $('.signup-btn').hide()
+                clicked = false;
+            } else {
+                $('.login-text').css('background-image', 'none')
+                $('.call-text').css('background-image', 'url("https://source.unsplash.com/800x450/?dark,nature,water")')
+                $('.signup-btn').show()
+                clicked = true;
+            }
+        }
+    </script> 
 </body>
 
 </html>

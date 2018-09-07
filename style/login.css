@@ -12,10 +12,17 @@ body {
     overflow: hidden;
 }
 
+#login {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
 .login-text {
     width: 800px;
     height: 450px;
-    background: linear-gradient(to left, #ab68ca, #de67a3);
+    background-image: none;
     position: absolute;
     top: -300px;
     box-sizing: border-box;
@@ -49,15 +56,16 @@ body {
 }
 
 .text input {
-    margin-top: 30px;
+    margin-top: 10px;
     height: 40px;
     width: 300px;
     border-radius: 2px;
     border: none;
-    background-color: #444;
-    opacity: 0.6;
+    background-color: #fff;
+    opacity: 0.8;
     outline: none;
-    color: #fff;
+    color: #444;
+    font-weight: bold;
     padding-left: 10px;
 }
 
@@ -75,13 +83,15 @@ body {
 .text .login-btn {
     background: #fff;
     border: none;
+    margin-top: 0px;
+    margin-bottom: 20px;
     border-radius: 2px;
     color: #696a86;
 }
 
 .text .signup-btn {
     background: transparent;
-    border: 2px solid #fff;
+    border: 2px solid rgb(116, 27, 27);
     border-radius: 2px;
     color: #fff;
     margin-left: 30px;
@@ -103,7 +113,7 @@ body {
 }
 
 .call-text {
-    background-color: #fff;
+    background-image: url("https://source.unsplash.com/800x450/?dark,nature,water");
     width: 800px;
     height: 450px;
     position: absolute;
@@ -114,13 +124,13 @@ body {
 }
 
 .call-text h1 {
-    font-size: 42px;
-    margin-top: 10%;
-    color: #696a86;
+    font-size: 50px;
+    margin-top: 7%;
+    color: #fff;
 }
 
 .call-text h1 span {
-    color: #333;
+    color: #fff;
     font-weight: bolder;
 }
 
@@ -129,8 +139,9 @@ body {
     width: 180px;
     border: none;
     border-radius: 20px;
-    background: linear-gradient(to left, #ab68ca, #de67a3);
-    color: #fff;
+    background: #fff;
+    opacity: 0.8;
+    color: #000;
     font-weight: bolder;
     margin-top: 30px;
     cursor: pointer;
