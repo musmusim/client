@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="google-signin-client_id" content="785037493601-205nrch5cf6k4dfdu7s3mj8e22f590r0.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>LOGIN</title>
+    <link rel="stylesheet" href="./style/login.css">
+
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="login-text">
+            <button class="cta"><i class="fas fa-chevron-down fa-1x"></i></button>
+            <div class="text">
+                <a href="">Login</a>
+                <hr>
+                <br>
+                <input type="text" placeholder="Username">
+                <br>
+                <input type="password" placeholder="Password">
+                <br>
+                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                <button class="login-btn">Log In</button>
+                <button class="signup-btn">Sign Up</button>
+            </div>
+        </div>
+        <div class="call-text">
+            <h1>Show us your <span>creative</span> side</h1>
+            <button>Join the Community</button>
+        </div>
+
+    </div>
+
+
+    <script src="./style/login.js"></script>
+
+    <script>
+        function onSignIn(googleUser) {
+
+            const token = googleUser.getAuthResponse().id_token;
+
+            $.ajax({
+                method: "POST",
+                url: "http://localhost:3000/users/signin/google",
+                data: {
+                    token : token
+                }
+            })
+            .done(function (data) {
+               
+            })
+            .fail( function (err) {
+                console.log(err)
+            })
+        }
+    </script>
+</body>
+
+</html>
