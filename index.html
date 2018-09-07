@@ -36,8 +36,8 @@
         <button class="login">
           <a href="login.html">login</a>
         </button>
-        <button class="signup">
-            <a href="login.html">signup</a>
+        <button class="logout">
+            <a>logout</a>
         </button>
       </span>
     </div>
@@ -62,7 +62,7 @@
 
 <div class="clearfix"></div>
 
-<footer>
+<footer id="footer">
     <div class="container-fluid bg-primary py-3">
       <div class="container">
         <div class="row">
@@ -112,7 +112,17 @@
                   
       
       <script>
-
+        $('.logout').hide()
+        $('.logout').click(function(){
+          localStorage.removeItem('token')
+          $('.login').show()
+          $('.logout').hide()
+        })
+        let token = localStorage.getItem('token')
+        if(token){
+          $('.login').hide()
+          $('.logout').show()
+        }
         function showTopTracks() {
           $('#top-content-title').text('Top Tracks');
           $('#top-content').text('');

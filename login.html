@@ -164,8 +164,8 @@
                     localStorage.setItem('token', response.token);
                     swal("Good job!", "You clicked the button!", "success")
                     .then(()=>{
-                       
-                    })
+                window.location.href = "index.html"
+            })
                 })
 
                 .fail(err => {
