@@ -39,24 +39,30 @@
         <div class="login-text">
             <button class="cta" onclick='animateLogin()'><i class="fas fa-chevron-down fa-1x"></i></button>
             <div class="text">
-                <a href="">Login</a>
-                <hr>
+                <a style="display: inline" href="">Register</a> <span style="font-size: 40px">|</span>
+                <a style="display: inline" href="">Login</a>
+
+
+
                 <br>
                 <input type="text" placeholder="Username" id="username">
-                <br>
-              <input type="text" placeholder="Email" id="email">
-              <br>
 
+                <br>
+                <input type="text" placeholder="Email" id="email">
+                <br>
                 <input type="password" placeholder="Password" id="password">
                 <br><br>
-                <button class="login-btn">Log In</button>
+                <button class="login-btn" id="login-btn">Log In</button>
+                <button type="button" class="signup" id="register">Sign Up</button>
                 <br>
-                <br>                                                                
-                <button type="button" class="signup-btn" id="register">Sign Up</button>
+                <br>
+
                 <div class="g-signin2" data-onsuccess="onSignIn"></div>
 
                 <br>
-                <div><fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button></div>
+                <div>
+                    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+                </div>
 
             </div>
         </div>
@@ -71,20 +77,24 @@
     <script src="./style/login.js"></script>
 
     <script>
-        $('#register').click(function(){
+        $('#register').click(function () {
             let username = $('#username').val()
             let email = $('#email').val()
             let password = $('#password').val()
 
-            let data = {username,email,password}
-            console.log(data);
-             axios.post('http://localhost:3000/users/signup',data)
-             .then(response =>{
-                swal(`${response.data.msg}`)                   
-             })
-             .catch(err =>{                                  
-                 swal(`${err.response.data.msg}`)                           
-             })
+            let data = {
+                username,
+                email,
+                password
+            }
+
+            axios.post('http://localhost:3000/users/signup', data)
+                .then(response => {
+                    swal(`${response.data.msg}`)
+                })
+                .catch(err => {
+                    swal(`${err.response.data.msg}`)
+                })
         })
     </script>
 
@@ -92,51 +102,87 @@
 
 
     <script>
+        $("#login-btn").click(() => {
+
+            const email = $("#email").val();
+
+            const password = $("#password").val();
+
+            console.log(username, password);
+
+            $.ajax({
+                    method: "POST",
+                    url: "http://localhost:3000/users/signin",
+                    data: {
+                        email,
+                        password
+                    }
+                })
+
+                .done(response => {                    
+                    localStorage.setItem('token', response.token);
+                    swal("Good job!", "You clicked the button!", "success")
+                    .then(()=>{
+                        window.location.href = "index.html"
+                    })
+                })
+
+                .fail(err => {
+                    alert(`${err.responseJSON.message}`);
+                })
+        })
+
         function onSignIn(googleUser) {
 
             const token = googleUser.getAuthResponse().id_token;
 
             $.ajax({
-                method: "POST",
-                url: "http://localhost:3000/users/signin/google",
-                data: {
-                    token : token
-                }
-            })
-            .done(function (data) {
-               console.log(data)
-            })
-            .fail( function (err) {
-                console.log(err)
-            })
+                    method: "POST",
+                    url: "http://localhost:3000/users/signin/google",
+                    data: {
+                        token: token
+                    }
+                })
+                .done(function (response) {
+                    localStorage.setItem('token',response.token)
+                    window.location.href = 'index.html'
+
+                })
+                .fail(function (err) {
+                    console.log(err)
+                })
         }
 
         function checkLoginState() {
-            FB.getLoginStatus(function(response) {
-            retrieveInfo(response);
+            FB.getLoginStatus(function (response) {
+                retrieveInfo(response);
             });
         }
-        
+
         function retrieveInfo(response) {
             let token = response.authResponse.accessToken
             $.ajax({
-                type: 'POST',
-                url: 'http://localhost:3000/users/signin/facebook',
-                data: {accessToken: token}
-            })
-            .done(data => {
-                localStorage.setItem('token', data.token)
-            })
-            .fail(err => {
-                console.log(err)
-            })
+                    type: 'POST',
+                    url: 'http://localhost:3000/users/signin/facebook',
+                    data: {
+                        accessToken: token
+                    }
+                })
+                .done(data => {
+                    localStorage.setItem('token', data.token)
+                    window.location.href = 'index.html'
+                })
+                .fail(err => {
+                    console.log(err)
+                })
         }
-        
+
         var clicked = true
 
         function animateLogin() {
             if (clicked) {
-                $('.login-text').css('background-image', 'url("https://source.unsplash.com/800x450/?dark,nature,water")')
+                $('.login-text').css('background-image',
+                    'url("https://source.unsplash.com/800x450/?dark,nature,water")')
                 $('.call-text').css('background-image', 'none')
                 $('.signup-btn').hide()
                 clicked = false;
@@ -147,7 +193,7 @@
                 clicked = true;
             }
         }
-    </script> 
+    </script>
 </body>
 
 </html>
