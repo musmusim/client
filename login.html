@@ -70,14 +70,37 @@
             <h1>Discover a whole new level of <span>Musmusim</span></h1>
             <button class="signup-btn">Sign Up Now</button>
         </div>
-
+        
     </div>
 
 
     <script src="./style/login.js"></script>
 
-    <script>
-        $('#register').click(function () {
+
+    <script> 
+        let token = localStorage.getItem('token')
+        
+        if (token){
+            $.ajax({
+                    method: "POST",
+                    url: "http://localhost:3000/users/authentication",
+                    data: {
+                        token: token
+                    }
+                })
+                .done(function (data) {
+                    if(data.token){
+                        // window.location.href = "index.html";
+                    }
+                })
+                .fail(function (err) {
+                    
+                })
+        }
+
+ 
+        $('#register').click(function(){
+
             let username = $('#username').val()
             let email = $('#email').val()
             let password = $('#password').val()
@@ -97,8 +120,6 @@
                 })
         })
     </script>
-
-
 
 
     <script>
@@ -137,22 +158,25 @@
             const token = googleUser.getAuthResponse().id_token;
 
             $.ajax({
-                    method: "POST",
-                    url: "http://localhost:3000/users/signin/google",
-                    data: {
-                        token: token
-                    }
-                })
-                .done(function (response) {
-                    localStorage.setItem('token',response.token)
-                    window.location.href = 'index.html'
 
-                })
-                .fail(function (err) {
-                    console.log(err)
-                })
+
+                method: "POST",
+                url: "http://localhost:3000/users/signin/google",
+                data: {
+                    token: token
+                }
+            })
+            .done(function (data) {
+                localStorage.setItem('token', data.token)  
+            })
+            .fail(function (err) {
+
+            })
+
+
         }
 
+      
         function checkLoginState() {
             FB.getLoginStatus(function (response) {
                 retrieveInfo(response);
