@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="./style/index.css">
     <title>Document</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
     <script
       src="https://code.jquery.com/jquery-3.3.1.min.js"
       integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
@@ -14,92 +14,174 @@
 </head>
 <body>
 <div class="row">
-  <div class="col-md-3">
-    side content
+  <div class="col-md-3" style="color: white">
+    <a href="javascript:void(0)" onclick="showTopTracks()">Top Tracks</a>
+    <a href="javascript:void(0)" onclick="showTopArtists()">Top Artists</a>
+    <a href="javascript:void(0)" onclick="showTopTags()">Top Tags</a>
   </div>
 
-  <div class="container col-md-7 offset-md-1" id="top-tracks"></div>
+  <div class="container col-md-7 offset-md-1" id="top-content"></div>
 </div>
       
       <script>
-        $.ajax({
-          method: "GET",
-          url: "http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key=e658510934f08b15b1d4d57b06b5e0f1&format=json&limit=10"
-        })
-        .done(data => {
-          let tracks = data.tracks.track;
-          console.log(tracks[0]);
+
+        function showTopTracks() {
+          $('#top-content').text('');
 
           $.ajax({
             method: "GET",
-            url: "http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=e658510934f08b15b1d4d57b06b5e0f1&format=json&mbid=f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387"
+            url: "http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key=e658510934f08b15b1d4d57b06b5e0f1&format=json&limit=5"
           })
-          .done(artistInfo => {
-            console.log(artistInfo);
-
-            let similiarArtist = artistInfo.artist.similar.artist;
-            let similiarArtistNames = [];
-
-            similiarArtist.forEach(artist => {
-              if(similiarArtistNames.length <= 5) {
-                similiarArtistNames.push(artist.name);
-              }
-            });
+          .done(data => {
+            let tracks = data.tracks.track;
 
             tracks.forEach(track => {
-              
-              console.log(track.playcount, '<=========');
+              let mbid = track.artist.mbid;
 
-              $('#top-tracks').append(
-                `
-                <div class="cellphone-container">
-                <div class="movie">       
-                  <div class="menu"><i class="material-icons"></i></div>
-                  <img  class="movie-img" src="${track.image[3]['#text']}"></img>
-                  <div class="text-movie-cont">
-                    <div class="mr-grid">
-                      <div class="col1">
-                        <h1>${track.name}</h1>
-                        <ul class="movie-gen">
-                          <li style="color: white">${track.artist.name}</li>
-                        </ul>
+              $.ajax({
+                method: "GET",
+                url: `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=e658510934f08b15b1d4d57b06b5e0f1&format=json&mbid=${mbid}`
+              })
+              .done(artistInfo => {
+                let similiarArtist = artistInfo.artist.similar.artist;
+                let similiarArtistNames = [];
+
+                similiarArtist.forEach(artist => {
+                  if(similiarArtistNames.length <= 5) {
+                    similiarArtistNames.push(artist.name);
+                  }
+                });
+
+                $('#top-content').append(
+                  `
+                  <div class="cellphone-container">
+                  <div class="movie">       
+                    <div class="menu"><i class="material-icons"></i></div>
+                    <img  class="movie-img" src="${track.image[3]['#text']}"></img>
+                    <div class="text-movie-cont">
+                      <div class="mr-grid">
+                        <div class="col1">
+                          <h1>${track.name}</h1>
+                          <ul class="movie-gen">
+                            <li style="color: white">${track.artist.name}</li>
+                          </ul>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mr-grid summary-row">
-                      <div class="col2">
-                        <h5>SUMMARY</h5>
+                      <div class="mr-grid summary-row">
+                        <div class="col2">
+                          <h5>SUMMARY</h5>
+                        </div>
+                        <div class="col2">
+                          <ul class="movie-likes">
+                            <li>${track.playcount}</li>
+                          </ul>
+                        </div>
                       </div>
-                      <div class="col2">
-                        <ul class="movie-likes">
-                          <li>${track.playcount}</li>
-                        </ul>
+                      <div class="mr-grid">
+                        <div class="col1">
+                          <p class="movie-description">${artistInfo.artist.bio.summary}</p>
+                        </div>
                       </div>
-                    </div>
-                    <div class="mr-grid">
-                      <div class="col1">
-                        <p class="movie-description">${artistInfo.artist.bio.summary}</p>
-                      </div>
-                    </div>
-                    <div class="mr-grid actors-row">
-                      <div class="col1">
-                        <p class="movie-actors">${similiarArtistNames.join(', ')}</p>
+                      <div class="mr-grid actors-row">
+                        <div class="col1">
+                          <p class="movie-actors">${similiarArtistNames.join(', ')}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                </div>
-                `
-              );
-            });
+                  </div>
+                  `
+                );
+              })
+              .fail(err => {
+                console.log(err);    
+              });
+            })
           })
           .fail(err => {
-            console.lo(err);
-          })
+            console.log(err);
+          });
+        }
 
-        })
-        .fail(err => {
-          console.log(err);
-        });
+        function showTopArtists() {
+          $('#top-content').text('');
+
+          $.ajax({
+            method: "GET",
+            url: "http://ws.audioscrobbler.com/2.0/?method=chart.gettopartists&api_key=e658510934f08b15b1d4d57b06b5e0f1&format=json&limit=5"
+          })
+          .done(data => {
+            let artists = data.artists.artist;
+
+            artists.forEach(artist => {
+              let mbid = artist.mbid;
+
+              $.ajax({
+                method: "GET",
+                url: `http://ws.audioscrobbler.com/2.0/?method=artist.getinfo&api_key=e658510934f08b15b1d4d57b06b5e0f1&format=json&mbid=${mbid}`
+              })
+              .done(artistInfo => {
+                let similiarArtist = artistInfo.artist.similar.artist;
+                let similiarArtistNames = [];
+
+                similiarArtist.forEach(artist => {
+                  if(similiarArtistNames.length <= 5) {
+                    similiarArtistNames.push(artist.name);
+                  }
+                });
+
+                $('#top-content').append(
+                  `
+                  <div class="cellphone-container">
+                  <div class="movie">       
+                    <div class="menu"><i class="material-icons"></i></div>
+                    <img  class="movie-img" src="${artist.image[3]['#text']}"></img>
+                    <div class="text-movie-cont">
+                      <div class="mr-grid">
+                        <div class="col1">
+                          <h1>${artist.name}</h1>
+                          <ul class="movie-gen">
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="mr-grid summary-row">
+                        <div class="col2">
+                          <h5>SUMMARY</h5>
+                        </div>
+                        <div class="col2">
+                          <ul class="movie-likes">
+                            <li>${artist.playcount}</li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="mr-grid">
+                        <div class="col1">
+                          <p class="movie-description">${artistInfo.artist.bio.summary}</p>
+                        </div>
+                      </div>
+                      <div class="mr-grid actors-row">
+                        <div class="col1">
+                          <p class="movie-actors">${similiarArtistNames.join(', ')}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  `
+                );
+              })
+              .fail(err => {
+                console.log(err);    
+              });
+            })
+          })
+          .fail(err => {
+            console.log(err);
+          });
+        }
+
+        showTopTracks();
+
       </script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
