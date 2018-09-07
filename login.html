@@ -41,23 +41,47 @@
     <script src="./style/login.js"></script>
 
     <script>
+
+        let token = localStorage.getItem('token')
+        
+        if (token){
+            $.ajax({
+                    method: "POST",
+                    url: "http://localhost:3000/users/authentication",
+                    data: {
+                        token: token
+                    }
+                })
+                .done(function (data) {
+                    if(data.token){
+                        // window.location.href = "index.html";
+                    }
+                })
+                .fail(function (err) {
+                    
+                })
+        }
+
+    </script>
+
+    <script>
         function onSignIn(googleUser) {
 
             const token = googleUser.getAuthResponse().id_token;
 
             $.ajax({
-                method: "POST",
-                url: "http://localhost:3000/users/signin/google",
-                data: {
-                    token : token
-                }
-            })
-            .done(function (data) {
-               
-            })
-            .fail( function (err) {
-                console.log(err)
-            })
+                    method: "POST",
+                    url: "http://localhost:3000/users/signin/google",
+                    data: {
+                        token: token
+                    }
+                })
+                .done(function (data) {
+                    localStorage.setItem('token', data.token)  
+                })
+                .fail(function (err) {
+                   
+                })
         }
     </script>
 </body>
