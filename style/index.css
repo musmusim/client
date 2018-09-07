@@ -12,7 +12,7 @@ body {
 
 .cellphone-container {
   width: 375px;
-  height: 650px;
+  min-height: 700px;
   background-color: #1e1b26;
   margin: 90px auto 0 auto;
   box-shadow: 5px 5px 115px -14px black;
