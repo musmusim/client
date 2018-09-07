@@ -35,12 +35,12 @@
             }(document, 'script', 'facebook-jssdk'));
     </script>
     <div class="wrapper">
-        <div id='login'>Log In</div>
+        <div id='login'>Login / Register</div>
         <div class="login-text">
             <button class="cta" onclick='animateLogin()'><i class="fas fa-chevron-down fa-1x"></i></button>
             <div class="text">
-                <a style="display: inline" href="">Register</a> <span style="font-size: 40px">|</span>
-                <a style="display: inline" href="">Login</a>
+                <a style="display: inline"  id="reg">Register</a> <span style="font-size: 40px" id="a">|</span>
+                <a style="display: inline"  id="log">Login</a>
 
 
 
@@ -57,18 +57,17 @@
                 <br>
                 <br>
 
-                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                <div class="g-signin2" data-onsuccess="onSignIn" id="google"></div>
 
                 <br>
                 <div>
-                    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+                    <fb:login-button scope="public_profile,email" onlogin="checkLoginState();" id="fb"></fb:login-button>
                 </div>
 
             </div>
         </div>
         <div class="call-text">
-            <h1>Discover a whole new level of <span>Musmusim</span></h1>
-            <button class="signup-btn">Sign Up Now</button>
+            <h1>Discover a whole new level of <span>Musmusim</span></h1>            
         </div>
         
     </div>
@@ -80,6 +79,27 @@
     <script> 
         let token = localStorage.getItem('token')
         
+        
+        
+        $('#login-btn').hide()
+        $('#fb').hide()
+        $('#google').hide()
+        $('#reg').click(function(){
+            
+            $('#login-btn').hide()
+        $('#fb').hide()
+        $('#google').hide()
+        $('#username').show()
+        $('#register').show()   
+        })
+
+        $('#log').click(function(){
+            $('#login-btn').show()
+        $('#fb').show()
+        $('#google').show()
+        $('#username').hide()
+        $('#register').hide()
+        })
         if (token){
             $.ajax({
                     method: "POST",
@@ -90,7 +110,7 @@
                 })
                 .done(function (data) {
                     if(data.token){
-                        // window.location.href = "index.html";
+                        window.location.href = "index.html";
                     }
                 })
                 .fail(function (err) {
@@ -144,7 +164,7 @@
                     localStorage.setItem('token', response.token);
                     swal("Good job!", "You clicked the button!", "success")
                     .then(()=>{
-                        window.location.href = "index.html"
+                       
                     })
                 })
 
@@ -167,7 +187,8 @@
                 }
             })
             .done(function (data) {
-                localStorage.setItem('token', data.token)  
+                localStorage.setItem('token', data.token)
+                window.location.href = "index.html"  
             })
             .fail(function (err) {
 
@@ -194,7 +215,7 @@
                 })
                 .done(data => {
                     localStorage.setItem('token', data.token)
-                    window.location.href = 'index.html'
+                    window.location.href = "index.html"
                 })
                 .fail(err => {
                     console.log(err)
