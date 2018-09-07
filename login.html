@@ -33,8 +33,9 @@
             }(document, 'script', 'facebook-jssdk'));
     </script>
     <div class="wrapper">
+        <div id='login'>Log In</div>
         <div class="login-text">
-            <button class="cta"><i class="fas fa-chevron-down fa-1x"></i></button>
+            <button class="cta" onclick='animateLogin()'><i class="fas fa-chevron-down fa-1x"></i></button>
             <div class="text">
                 <a href="">Login</a>
                 <hr>
@@ -42,16 +43,17 @@
                 <input type="text" placeholder="Username">
                 <br>
                 <input type="password" placeholder="Password">
+                <br><br>
+                <button class="login-btn">Log In</button>
                 <br>
                 <div class="g-signin2" data-onsuccess="onSignIn"></div>
-                <button class="login-btn">Log In</button>
-                <button class="signup-btn">Sign Up</button>
-                <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
+                <br>
+                <div><fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button></div>
             </div>
         </div>
         <div class="call-text">
-            <h1>Show us your <span>creative</span> side</h1>
-            <button>Join the Community</button>
+            <h1>Discover a whole new level of <span>Musmusim</span></h1>
+            <button class="signup-btn">Sign Up Now</button>
         </div>
 
     </div>
@@ -99,7 +101,23 @@
                 console.log(err)
             })
         }
-    </script>
+        
+        var clicked = true
+
+        function animateLogin() {
+            if (clicked) {
+                $('.login-text').css('background-image', 'url("https://source.unsplash.com/800x450/?dark,nature,water")')
+                $('.call-text').css('background-image', 'none')
+                $('.signup-btn').hide()
+                clicked = false;
+            } else {
+                $('.login-text').css('background-image', 'none')
+                $('.call-text').css('background-image', 'url("https://source.unsplash.com/800x450/?dark,nature,water")')
+                $('.signup-btn').show()
+                clicked = true;
+            }
+        }
+    </script> 
 </body>
 
 </html>
