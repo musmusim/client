@@ -8,6 +8,8 @@
     <meta name="google-signin-client_id" content="785037493601-205nrch5cf6k4dfdu7s3mj8e22f590r0.apps.googleusercontent.com">
     <script src="https://apis.google.com/js/platform.js" async defer></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <title>LOGIN</title>
     <link rel="stylesheet" href="./style/login.css">
 
@@ -40,15 +42,22 @@
                 <a href="">Login</a>
                 <hr>
                 <br>
-                <input type="text" placeholder="Username">
+                <input type="text" placeholder="Username" id="username">
                 <br>
-                <input type="password" placeholder="Password">
+              <input type="text" placeholder="Email" id="email">
+              <br>
+
+                <input type="password" placeholder="Password" id="password">
                 <br><br>
                 <button class="login-btn">Log In</button>
                 <br>
+                <br>                                                                
+                <button type="button" class="signup-btn" id="register">Sign Up</button>
                 <div class="g-signin2" data-onsuccess="onSignIn"></div>
+
                 <br>
                 <div><fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button></div>
+
             </div>
         </div>
         <div class="call-text">
@@ -60,6 +69,27 @@
 
 
     <script src="./style/login.js"></script>
+
+    <script>
+        $('#register').click(function(){
+            let username = $('#username').val()
+            let email = $('#email').val()
+            let password = $('#password').val()
+
+            let data = {username,email,password}
+            console.log(data);
+             axios.post('http://localhost:3000/users/signup',data)
+             .then(response =>{
+                swal(`${response.data.msg}`)                   
+             })
+             .catch(err =>{                                  
+                 swal(`${err.response.data.msg}`)                           
+             })
+        })
+    </script>
+
+
+
 
     <script>
         function onSignIn(googleUser) {
@@ -74,7 +104,7 @@
                 }
             })
             .done(function (data) {
-               
+               console.log(data)
             })
             .fail( function (err) {
                 console.log(err)
