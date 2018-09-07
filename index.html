@@ -20,12 +20,14 @@
     <a href="javascript:void(0)" onclick="showTopTags()">Top Tags</a>
   </div>
 
+  <h1 id="top-content-title"></h1>
   <div class="container col-md-7 offset-md-1" id="top-content"></div>
 </div>
       
       <script>
 
         function showTopTracks() {
+          $('#top-content-title').text('Top Tracks');
           $('#top-content').text('');
 
           $.ajax({
@@ -104,6 +106,7 @@
         }
 
         function showTopArtists() {
+          $('#top-content-title').text('Top Artists');
           $('#top-content').text('');
 
           $.ajax({
@@ -180,7 +183,78 @@
           });
         }
 
-        showTopTracks();
+        function showTopTags() {
+          $('#top-content-title').text('Top Tags');
+          $('#top-content').text('');
+
+          $.ajax({
+            method: 'GET',
+            url: 'http://ws.audioscrobbler.com/2.0/?method=chart.gettoptags&api_key=3fe80356984b7661022a75fdd270e589&format=json&limit=5'
+          })
+          .done(data => {
+            let tags = data.tags.tag;
+
+            tags.forEach(tag => {
+
+              $.ajax({
+                method: 'GET',
+                url: `http://ws.audioscrobbler.com/2.0/?method=tag.getinfo&tag=${tag.name}&api_key=3fe80356984b7661022a75fdd270e589&format=json`
+              })
+              .done(tagInfo => {
+                let summary = tagInfo.tag.wiki.summary;
+
+                $('#top-content').append(
+                  `
+                  <div class="cellphone-container">
+                  <div class="movie">       
+                    <div class="menu"><i class="material-icons"></i></div>
+                    <img  class="movie-img" src=""></img>
+                    <div class="text-movie-cont">
+                      <div class="mr-grid">
+                        <div class="col1">
+                          <h1>${tag.name}</h1>
+                          <ul class="movie-gen">
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="mr-grid summary-row">
+                        <div class="col2">
+                          <h5>SUMMARY</h5>
+                        </div>
+                        <div class="col2">
+                          <ul class="movie-likes">
+                            <li></li>
+                          </ul>
+                        </div>
+                      </div>
+                      <div class="mr-grid">
+                        <div class="col1">
+                          <p class="movie-description">${summary}</p>
+                        </div>
+                      </div>
+                      <div class="mr-grid actors-row">
+                        <div class="col1">
+                          <p class="movie-actors"></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  </div>
+                  `
+                );
+              })
+              .fail(err => {
+                console.log(err);
+              });
+            });
+          })
+          .fail(err => {
+            console.log(err);
+          });
+        }
+
+        // showTopTracks();
+        showTopTags();
 
       </script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
