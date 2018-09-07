@@ -14,6 +14,24 @@
 </head>
 
 <body>
+    <script>
+        window.fbAsyncInit = function() {
+            FB.init({
+            appId            : 1370404409760808,
+            autoLogAppEvents : true,
+            xfbml            : true,
+            version          : 'v3.1'
+            });
+        };
+        
+        (function(d, s, id){
+            var js, fjs = d.getElementsByTagName(s)[0];
+            if (d.getElementById(id)) {return;}
+            js = d.createElement(s); js.id = id;
+            js.src = "https://connect.facebook.net/en_US/sdk.js";
+            fjs.parentNode.insertBefore(js, fjs);
+            }(document, 'script', 'facebook-jssdk'));
+    </script>
     <div class="wrapper">
         <div class="login-text">
             <button class="cta"><i class="fas fa-chevron-down fa-1x"></i></button>
@@ -28,6 +46,7 @@
                 <div class="g-signin2" data-onsuccess="onSignIn"></div>
                 <button class="login-btn">Log In</button>
                 <button class="signup-btn">Sign Up</button>
+                <fb:login-button scope="public_profile,email" onlogin="checkLoginState();"></fb:login-button>
             </div>
         </div>
         <div class="call-text">
@@ -56,6 +75,27 @@
                
             })
             .fail( function (err) {
+                console.log(err)
+            })
+        }
+
+        function checkLoginState() {
+            FB.getLoginStatus(function(response) {
+            retrieveInfo(response);
+            });
+        }
+        
+        function retrieveInfo(response) {
+            let token = response.authResponse.accessToken
+            $.ajax({
+                type: 'POST',
+                url: 'http://localhost:3000/users/signin/facebook',
+                data: {accessToken: token}
+            })
+            .done(data => {
+                localStorage.setItem('token', data.token)
+            })
+            .fail(err => {
                 console.log(err)
             })
         }
